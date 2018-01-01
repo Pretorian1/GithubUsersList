@@ -39,9 +39,21 @@ public class GitHubAdapter  extends RecyclerView.Adapter<GitHubUserHolder> {
             githubUsersArrayList.addAll(githubUsers);
     }
 
+    public ArrayList<GithubUser> getData(){
+        return  githubUsersArrayList;
+    }
+
     public void clearData(){
         if(githubUsersArrayList!=null)
             githubUsersArrayList.clear();
+    }
+
+    public void restoreData(ArrayList<GithubUser> githubUsers){
+        if(githubUsersArrayList == null){
+            githubUsersArrayList = new ArrayList<>();
+            githubUsersArrayList.addAll(githubUsers);
+            notifyDataSetChanged();
+        }
     }
 
     @Override

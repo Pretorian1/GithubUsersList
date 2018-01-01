@@ -1,9 +1,9 @@
 package com.example.max.githubuserslist.fragments;
 
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -37,10 +37,18 @@ public class GitHubUsersListFragments extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     @BindView(R.id.github_users_list)
-    RecyclerView githubUsersList;
+    RecyclerView gitHubUsersRecycle;
 
     @BindView(R.id.load_bar)
     ProgressBar loadBar;
+
+    Parcelable layoutManagerSavedState;
+
+    ArrayList<GithubUser> gitHubUsersList;
+
+    boolean savedState;
+
+    int bufferPage;
 
     private GitHubAdapter gitHubAdapter;
 
@@ -53,27 +61,43 @@ public class GitHubUsersListFragments extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_github_users_list, container, false);
         ButterKnife.bind(this, v);
 
         gitHubAdapter = new GitHubAdapter();
-        githubUsersList.setAdapter(gitHubAdapter);
+        gitHubUsersRecycle.setAdapter(gitHubAdapter);
 
         layoutManager = new LinearLayoutManager(getContext());
 
-        githubUsersList.setLayoutManager(layoutManager);
+        gitHubUsersRecycle.setLayoutManager(layoutManager);
+
+        if(savedState){
+            gitHubAdapter.restoreData(gitHubUsersList);
+            // listNewsPostSmall.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+            restoreLayoutManagerPosition();
+
+        }
 
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 //if(vidMeVideoAdapter.getItemCount()<totalCount && totalCount!=0)
                     loadNextDataFromApi(page);
+                    bufferPage = page;
             }
         };
        // scrollListener.setVisibleThreshold(2);
-        githubUsersList.addOnScrollListener(scrollListener);
-        githubUsersList.getRecycledViewPool().setMaxRecycledViews(0, 0);
+        gitHubUsersRecycle.addOnScrollListener(scrollListener);
+        if(savedState)
+            scrollListener.setCurrentPage(bufferPage);
+        gitHubUsersRecycle.getRecycledViewPool().setMaxRecycledViews(0, 0);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -82,6 +106,8 @@ public class GitHubUsersListFragments extends Fragment {
                 gitHubAdapter.clearData();
                 gitHubAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
+                if(gitHubUsersList!=null)
+                    gitHubUsersList.clear();
             }
         });
         return v;
@@ -96,18 +122,9 @@ public class GitHubUsersListFragments extends Fragment {
         switch(event.message) {
             case Messages.RESPONSE_GITHUB_USERS:
                 hideProgressBar();
-
-               ArrayList<GithubUser> githubUsers = (ArrayList<GithubUser>) event.link;
-
-
-                    gitHubAdapter.setData(githubUsers);
-                    gitHubAdapter.notifyDataSetChanged();
-//                else{
-//                    vidMeVideoAdapter.addData(videosFromVidMe.getVideoVidMeArrayList());
-//                    vidMeVideoAdapter.notifyItemRangeChanged(vidMeVideoAdapter.getItemCount()-Settings.VIDEOS_LIMIT, Settings.VIDEOS_LIMIT);
-//                }
-
-
+                ArrayList<GithubUser> githubUsers = (ArrayList<GithubUser>) event.link;
+                gitHubAdapter.setData(githubUsers);
+                gitHubAdapter.notifyDataSetChanged();
                 break;
         }
     }
@@ -115,7 +132,9 @@ public class GitHubUsersListFragments extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        requestFirstUsers();
+        if(!savedState)
+            requestFirstUsers();
+        savedState = false;
     }
 
     @Override
@@ -129,6 +148,9 @@ public class GitHubUsersListFragments extends Fragment {
     public void onStop() {
         super.onStop();
         EventBus.getDefault().unregister(this);
+        gitHubUsersList = gitHubAdapter.getData();
+        layoutManagerSavedState = gitHubUsersRecycle.getLayoutManager().onSaveInstanceState();
+        savedState = true;
     }
 
     public void showProgressBar() {
@@ -147,6 +169,12 @@ public class GitHubUsersListFragments extends Fragment {
     private void requestNextUsers(int offset){
         showProgressBar();
         GitHubRequests.requestUsers(offset);
+    }
+
+    private void restoreLayoutManagerPosition() {
+        if (layoutManagerSavedState != null) {
+            gitHubUsersRecycle.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }
     }
 
 

@@ -104,4 +104,8 @@ public abstract class EndlessRecyclerViewScrollListener  extends RecyclerView.On
     public void setVisibleThreshold(int visibleThreshold){
         this.visibleThreshold = visibleThreshold;
     }
+
+    public void setCurrentPage(int currentPage){
+        this.currentPage = currentPage;
+    }
 }
