@@ -35,6 +35,11 @@ public class GitHubAdapter  extends RecyclerView.Adapter<GitHubUserHolder> {
             githubUsers.addAll(githubUsers);
     }
 
+    public void clearData(){
+        if(githubUsersArrayList!=null)
+            githubUsersArrayList.clear();
+    }
+
     @Override
     public GitHubUserHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_github_user, parent, false);

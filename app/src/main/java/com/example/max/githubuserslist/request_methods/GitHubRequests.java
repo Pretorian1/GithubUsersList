@@ -13,7 +13,7 @@ import retrofit2.Call;
 
 public class GitHubRequests {
 
-    public static void signIn(int page){
+    public static void requestUsers(int page){
         GitHubApi service =  ApiMethods.createGitHubApi();
         Call call = service.getGitHubUsers(page, Settings.perPage);
         ApiMethods.makeRequest(call, Messages.RESPONSE_GITHUB_USERS);
