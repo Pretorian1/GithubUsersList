@@ -57,7 +57,7 @@ public class GitHubUsersListFragments extends Fragment {
         View v = inflater.inflate(R.layout.fragment_github_users_list, container, false);
         ButterKnife.bind(this, v);
 
-        gitHubAdapter = new GitHubAdapter(null);
+        gitHubAdapter = new GitHubAdapter();
         githubUsersList.setAdapter(gitHubAdapter);
 
         layoutManager = new LinearLayoutManager(getContext());

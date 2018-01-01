@@ -19,6 +19,10 @@ public class GitHubAdapter  extends RecyclerView.Adapter<GitHubUserHolder> {
 
     private ArrayList<GithubUser> githubUsersArrayList;
 
+    public GitHubAdapter(){
+
+    }
+
     public GitHubAdapter(ArrayList<GithubUser> githubUsers){
         githubUsersArrayList = githubUsers;
 
@@ -26,13 +30,13 @@ public class GitHubAdapter  extends RecyclerView.Adapter<GitHubUserHolder> {
 
     public void setData(ArrayList<GithubUser> githubUsers){
 
-        if(githubUsers == null){
-            githubUsers = new ArrayList<>();
-            githubUsers.addAll(githubUsers);
+        if(githubUsersArrayList == null){
+            githubUsersArrayList = new ArrayList<>();
+            githubUsersArrayList.addAll(githubUsers);
         }
 
         else
-            githubUsers.addAll(githubUsers);
+            githubUsersArrayList.addAll(githubUsers);
     }
 
     public void clearData(){

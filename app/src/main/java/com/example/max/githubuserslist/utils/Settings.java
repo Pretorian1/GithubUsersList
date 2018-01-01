@@ -7,5 +7,5 @@ package com.example.max.githubuserslist.utils;
 public class Settings {
 
     public static final String GITHUB_USERS_URL = "https://api.github.com/";
-    public static final int perPage = 20;
+    public static final int perPage = 50;
 }
