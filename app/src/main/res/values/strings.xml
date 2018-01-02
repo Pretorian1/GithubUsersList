@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GithubUsersList</string>
+    <string name="ok_word">Ok</string>
+    <string name="server_error">Server Error</string>
 </resources>

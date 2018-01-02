@@ -49,7 +49,7 @@ public class GitHubAdapter  extends RecyclerView.Adapter<GitHubUserHolder> {
     }
 
     public void restoreData(ArrayList<GithubUser> githubUsers){
-        if(githubUsersArrayList == null){
+        if(githubUsersArrayList == null && githubUsers != null){
             githubUsersArrayList = new ArrayList<>();
             githubUsersArrayList.addAll(githubUsers);
             notifyDataSetChanged();

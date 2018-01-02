@@ -1,10 +1,12 @@
 package com.example.max.githubuserslist.fragments;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -125,12 +127,29 @@ public class GitHubUsersListFragments extends Fragment {
     @Subscribe
     public void onMessageEvent(MessageEvent event){
         switch(event.message) {
+
             case Messages.RESPONSE_GITHUB_USERS:
                 hideProgressBar();
                 ArrayList<GithubUser> githubUsers = (ArrayList<GithubUser>) event.link;
                 since = githubUsers.get(Settings.PER_PAGE-1).getId();
                 gitHubAdapter.setData(githubUsers);
                 gitHubAdapter.notifyDataSetChanged();
+                break;
+
+            case Messages.RESPONSE_SERVER_ERROR:
+                hideProgressBar();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(getString(R.string.server_error))
+                        .setMessage(getString(R.string.server_error))
+                        .setNegativeButton(getString(R.string.ok_word),
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
                 break;
         }
     }
