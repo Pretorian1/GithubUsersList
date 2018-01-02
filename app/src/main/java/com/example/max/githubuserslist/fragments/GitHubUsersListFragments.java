@@ -93,7 +93,6 @@ public class GitHubUsersListFragments extends Fragment {
 
         if(savedState){
             gitHubAdapter.restoreData(gitHubUsersList);
-            // listNewsPostSmall.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
             restoreLayoutManagerPosition();
 
         }
@@ -101,12 +100,10 @@ public class GitHubUsersListFragments extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                //if(vidMeVideoAdapter.getItemCount()<totalCount && totalCount!=0)
                     loadNextDataFromApi(since);
                     bufferPage = page;
             }
         };
-       // scrollListener.setVisibleThreshold(2);
         gitHubUsersRecycle.addOnScrollListener(scrollListener);
         if(savedState)
             scrollListener.setCurrentPage(bufferPage);
