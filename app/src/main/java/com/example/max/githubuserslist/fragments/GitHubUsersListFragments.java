@@ -2,6 +2,7 @@ package com.example.max.githubuserslist.fragments;
 
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by Max on 01.01.2018.
@@ -42,6 +44,14 @@ public class GitHubUsersListFragments extends Fragment {
 
     @BindView(R.id.load_bar)
     ProgressBar loadBar;
+
+    @BindView(R.id.floating_clear_data)
+    FloatingActionButton floatingActionButton;
+
+    @OnClick(R.id.floating_clear_data)
+    public void floatingClearData(){
+        refreshData();
+    }
 
     Parcelable layoutManagerSavedState;
 
@@ -105,13 +115,7 @@ public class GitHubUsersListFragments extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                requestFirstUsers();
-                gitHubAdapter.clearData();
-                gitHubAdapter.notifyDataSetChanged();
-                swipeRefreshLayout.setRefreshing(false);
-                since = 0;
-                if(gitHubUsersList!=null)
-                    gitHubUsersList.clear();
+              refreshData();
             }
         });
         return v;
@@ -160,10 +164,12 @@ public class GitHubUsersListFragments extends Fragment {
 
     public void showProgressBar() {
         loadBar.setVisibility(View.VISIBLE);
+        floatingActionButton.setVisibility(View.GONE);
     }
 
     public void hideProgressBar(){
         loadBar.setVisibility(View.GONE);
+        floatingActionButton.setVisibility(View.VISIBLE);
     }
 
     private void requestFirstUsers() {
@@ -180,6 +186,16 @@ public class GitHubUsersListFragments extends Fragment {
         if (layoutManagerSavedState != null) {
             gitHubUsersRecycle.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
         }
+    }
+
+    public void refreshData(){
+        requestFirstUsers();
+        gitHubAdapter.clearData();
+        gitHubAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+        since = 0;
+        if(gitHubUsersList!=null)
+            gitHubUsersList.clear();
     }
 
 
