@@ -17,6 +17,6 @@ public interface GitHubApi {
     String USERS_URI ="users";
 
     @GET(USERS_URI)
-    Call<List<GithubUser>> getGitHubUsers(@Query("page") int page, @Query("per-page") int perPage);
+    Call<List<GithubUser>> getGitHubUsers(@Query("since") int since);
 
 }

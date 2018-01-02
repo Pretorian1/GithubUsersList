@@ -18,6 +18,7 @@ import com.example.max.githubuserslist.request_methods.GitHubRequests;
 import com.example.max.githubuserslist.response_models.GithubUser;
 import com.example.max.githubuserslist.utils.MessageEvent;
 import com.example.max.githubuserslist.utils.Messages;
+import com.example.max.githubuserslist.utils.Settings;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +50,8 @@ public class GitHubUsersListFragments extends Fragment {
     boolean savedState;
 
     int bufferPage;
+
+    int since;
 
     private GitHubAdapter gitHubAdapter;
 
@@ -89,7 +92,7 @@ public class GitHubUsersListFragments extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 //if(vidMeVideoAdapter.getItemCount()<totalCount && totalCount!=0)
-                    loadNextDataFromApi(page);
+                    loadNextDataFromApi(since);
                     bufferPage = page;
             }
         };
@@ -106,6 +109,7 @@ public class GitHubUsersListFragments extends Fragment {
                 gitHubAdapter.clearData();
                 gitHubAdapter.notifyDataSetChanged();
                 swipeRefreshLayout.setRefreshing(false);
+                since = 0;
                 if(gitHubUsersList!=null)
                     gitHubUsersList.clear();
             }
@@ -113,8 +117,8 @@ public class GitHubUsersListFragments extends Fragment {
         return v;
     }
 
-    private void loadNextDataFromApi(int page) {
-        requestNextUsers(page);
+    private void loadNextDataFromApi(int since) {
+        requestNextUsers(since);
     }
 
     @Subscribe
@@ -123,6 +127,7 @@ public class GitHubUsersListFragments extends Fragment {
             case Messages.RESPONSE_GITHUB_USERS:
                 hideProgressBar();
                 ArrayList<GithubUser> githubUsers = (ArrayList<GithubUser>) event.link;
+                since = githubUsers.get(Settings.PER_PAGE-1).getId();
                 gitHubAdapter.setData(githubUsers);
                 gitHubAdapter.notifyDataSetChanged();
                 break;
@@ -166,9 +171,9 @@ public class GitHubUsersListFragments extends Fragment {
         GitHubRequests.requestUsers(0);
     }
 
-    private void requestNextUsers(int offset){
+    private void requestNextUsers(int since){
         showProgressBar();
-        GitHubRequests.requestUsers(offset);
+        GitHubRequests.requestUsers(since);
     }
 
     private void restoreLayoutManagerPosition() {

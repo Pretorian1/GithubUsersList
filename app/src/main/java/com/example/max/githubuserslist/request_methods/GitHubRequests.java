@@ -13,9 +13,9 @@ import retrofit2.Call;
 
 public class GitHubRequests {
 
-    public static void requestUsers(int page){
+    public static void requestUsers(int since){
         GitHubApi service =  ApiMethods.createGitHubApi();
-        Call call = service.getGitHubUsers(page, Settings.perPage);
+        Call call = service.getGitHubUsers(since);
         ApiMethods.makeRequest(call, Messages.RESPONSE_GITHUB_USERS);
     }
 }
